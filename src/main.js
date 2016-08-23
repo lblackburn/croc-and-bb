@@ -4,19 +4,45 @@ const app = electron.app
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
 
+if( process.platform == 'darwin' ) {
+	const {Menu} = require('electron')
+	
+	const template = [
+		{
+			role: 'window',
+			label: 'Croc & BB',
+			submenu: [
+				{
+					role: 'quit'
+				}
+			]
+		}
+	]
+
+	
+	const menu = Menu.buildFromTemplate(template)
+
+	Menu.setApplicationMenu(menu)
+}
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow = new BrowserWindow({width: 1024, height: 768});
+
+  mainWindow.setContentSize(1024, 768, false);
+  mainWindow.setFullScreenable(false);
+  mainWindow.setMaximizable(false);
+  mainWindow.setResizable(false);
+  mainWindow.setMenu(null);
+  mainWindow.setAutoHideMenuBar(true);
+  mainWindow.setMenuBarVisibility(false);
 
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`)
-
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -34,11 +60,7 @@ app.on('ready', createWindow)
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  app.quit()
 })
 
 app.on('activate', function () {
